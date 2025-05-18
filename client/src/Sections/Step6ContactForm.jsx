@@ -22,46 +22,64 @@ const Step6ContactForm = () => {
 
 
   // Set base URL and enable credentials
-  axios.defaults.baseURL = 'https://busy-winna-mady-97b82aae.koyeb.app/';
+  // axios.defaults.baseURL = 'https://busy-winna-mady-97b82aae.koyeb.app/';
+  axios.defaults.baseURL = 'http://127.0.0.1:8000/';
   axios.defaults.withCredentials = true;
 
   // Function to get CSRF token from cookies
   function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
+    console.log(name)
+    const cookies = document.cookie.split(';');
+    console.log(cookies)
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(`${name}=`)) {
+        return decodeURIComponent(cookie.split('=')[1]);
+      }
+    }
+    return null;
   }
+
 
   // Function to submit feedback
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Fetch CSRF cookie
-    await axios.get('/sanctum/csrf-cookie');
+    setLoading(true);
 
-    // Get CSRF token from cookies
-    const csrfToken = getCookie('XSRF-TOKEN');
+    try {
+      // Fetch CSRF cookie
+      const csrfResponse = await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
 
-    // Send POST request with CSRF token in headers
-    await axios.post('/api/feedback', {
-      name: formData.name,
-      email: formData.email,
-      message: formData.message
-    }, {
-      headers: {
-        'X-XSRF-TOKEN': decodeURIComponent(csrfToken),
-      },
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.statusText}`);
+      // const csrfToken = getCookie('XSRF-TOKEN');
+      const csrfToken = csrfResponse.data.token;
+      console.log(csrfToken)
+
+      if (!csrfToken) {
+        throw new Error('CSRF token not found.');
       }
+
+      // Send POST request with CSRF token in headers
+      const response = await axios.post('/api/feedback', {
+        name: formData.name,
+        email: formData.email,
+        message: formData.message
+      }, {
+        headers: {
+          'X-XSRF-TOKEN': csrfToken,
+        },
+      });
+
+      // Handle response
       setSubmitted(true);
       Toast('Data submitted successfully!', '✅', 'top-center');
-    })
-      .catch(error => Toast(`Submission failed: ${error.message}`, '❌', 'top-center'))
-      .finally(() => setLoading(false))
-
-
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      Toast(`Submission failed: ${error.message}`, '❌', 'top-center');
+    } finally {
+      setLoading(false);
+    }
   };
+
 
 
 

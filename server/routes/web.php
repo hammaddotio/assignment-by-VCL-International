@@ -7,6 +7,16 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 use App\Models\Feedback;
 
+
+Route::get('/sanctum/csrf-cookie', function () {
+    $domain = request()->getHost(); // Dynamically set the domain
+    $response = response()->json(['message' => 'CSRF cookie set', 'token' => csrf_token()]);
+    $response->headers->setCookie(cookie('XSRF-TOKEN', csrf_token(), 120, '/', $domain));
+    return $response;
+});
+
+
+
 Route::get('/', function (Request $request, Response $response) {
     return response()->json([
         'Success' => 'true'

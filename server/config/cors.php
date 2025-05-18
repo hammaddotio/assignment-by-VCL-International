@@ -3,7 +3,7 @@
 return [
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
     'allowed_methods' => ['*'],
-    'allowed_origins' => [env('FRONTEND_URL'), 'https://assignment-by-vcl-international.vercel.app/'],
+    'allowed_origins' => ['http://localhost:5173', 'https://assignment-by-vcl-international.vercel.app'],
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
