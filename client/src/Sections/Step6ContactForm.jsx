@@ -22,7 +22,7 @@ const Step6ContactForm = () => {
 
 
   // Set base URL and enable credentials
-  axios.defaults.baseURL = 'http://127.0.0.1:8000';
+  axios.defaults.baseURL = 'https://busy-winna-mady-97b82aae.koyeb.app/';
   axios.defaults.withCredentials = true;
 
   // Function to get CSRF token from cookies
@@ -33,7 +33,7 @@ const Step6ContactForm = () => {
   }
 
   // Function to submit feedback
-  const handleSubmit = async (e, feedbackData) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Fetch CSRF cookie
     await axios.get('/sanctum/csrf-cookie');
