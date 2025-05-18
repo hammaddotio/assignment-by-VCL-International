@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FeedbackController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -14,6 +15,8 @@ Route::get('/sanctum/csrf-cookie', function () {
     $response->headers->setCookie(cookie('XSRF-TOKEN', csrf_token(), 120, '/', $domain));
     return $response;
 });
+
+
 
 
 

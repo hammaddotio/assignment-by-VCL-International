@@ -21,45 +21,22 @@ const Step6ContactForm = () => {
   };
 
 
-  // Set base URL and enable credentials
-  axios.defaults.baseURL = 'https://busy-winna-mady-97b82aae.koyeb.app/';
-  // axios.defaults.baseURL = 'http://127.0.0.1:8000/';
-  axios.defaults.withCredentials = true;
-
-  // Function to get CSRF token from cookies
-  function getCookie(name) {
-    console.log(name)
-    const cookies = document.cookie.split(';');
-    console.log(cookies)
-    for (let cookie of cookies) {
-      cookie = cookie.trim();
-      if (cookie.startsWith(`${name}=`)) {
-        return decodeURIComponent(cookie.split('=')[1]);
-      }
-    }
-    return null;
-  }
 
 
-  // Function to submit feedback
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Fetch CSRF cookie
       const csrfResponse = await axios.get('/sanctum/csrf-cookie', { withCredentials: true });
 
-      // const csrfToken = getCookie('XSRF-TOKEN');
       const csrfToken = csrfResponse.data.token;
-      console.log(csrfToken)
 
       if (!csrfToken) {
         throw new Error('CSRF token not found.');
       }
 
-      // Send POST request with CSRF token in headers
-      const response = await axios.post('/api/feedback', {
+      const response = await axios.post('/api/feedbacks', {
         name: formData.name,
         email: formData.email,
         message: formData.message
@@ -69,7 +46,6 @@ const Step6ContactForm = () => {
         },
       });
 
-      // Handle response
       setSubmitted(true);
       Toast('Data submitted successfully!', '✅', 'top-center');
     } catch (error) {
@@ -81,35 +57,6 @@ const Step6ContactForm = () => {
   };
 
 
-
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  // await axios.post('http://127.0.0.1:8000/api/feedback', {
-  //   name: formData.name,
-  //   email: formData.email,
-  //   message: formData.message
-  // }, {
-  //     withCredentials: true,
-  //     withXSRFToken: true,
-  //     headers: {
-  //       // 'Content-Type': 'application/json',
-  //       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
-  //     }
-  //   })
-  //     .then(response => {
-  //       if (!response.ok) {
-  //         throw new Error(`Server error: ${response.statusText}`);
-  //       }
-  //       setSubmitted(true);
-  //       Toast('Data submitted successfully!', '✅', 'top-center');
-  //     })
-  //     .catch(error => Toast(`Submission failed: ${error.message}`, '❌', 'top-center'))
-  //     .finally(() => setLoading(false))
-
-  // };
 
   return (
     <div className="">

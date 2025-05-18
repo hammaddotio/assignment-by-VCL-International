@@ -8,6 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Feedback extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = ['name', 'email', 'message'];
+
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->name(),
+            'email' => fake()->safeEmail(),
+            'message' => fake()->paragraph(),
+        ];
+    }
 }
