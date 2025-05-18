@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Toast from '../Components/Toast';
 import Button from '../Components/Button';
+import axios from 'axios';
 
 const Step6ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -19,30 +20,65 @@ const Step6ContactForm = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await fetch('https://your-api-endpoint.com/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.statusText}`);
-      }
+  // Set base URL and enable credentials
+  axios.defaults.baseURL = 'http://127.0.0.1:8000';
+  axios.defaults.withCredentials = true;
 
-      setSubmitted(true);
-      Toast('Data submitted successfully!', '✅', 'top-center');
-    } catch (error) {
-      Toast(`Submission failed: ${error.message}`, '❌', 'top-center');
-    } finally {
-      setLoading(false);
-    }
+  // Function to get CSRF token from cookies
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+
+  // Function to submit feedback
+  const handleSubmit = async (feedbackData) => {
+    // Fetch CSRF cookie
+    await axios.get('/sanctum/csrf-cookie');
+
+    // Get CSRF token from cookies
+    const csrfToken = getCookie('XSRF-TOKEN');
+
+    // Send POST request with CSRF token in headers
+    const response = await axios.post('/api/feedback', feedbackData, {
+      headers: {
+        'X-XSRF-TOKEN': decodeURIComponent(csrfToken),
+      },
+    });
+
+    return response;
   };
+
+
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   await axios.post('http://127.0.0.1:8000/api/feedback', {
+  //     name: formData.name,
+  //     email: formData.email,
+  //     message: formData.message
+  //   }, {
+  //     withCredentials: true,
+  //     withXSRFToken: true,
+  //     headers: {
+  //       // 'Content-Type': 'application/json',
+  //       'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+  //     }
+  //   })
+  //     .then(response => {
+  //       if (!response.ok) {
+  //         throw new Error(`Server error: ${response.statusText}`);
+  //       }
+  //       setSubmitted(true);
+  //       Toast('Data submitted successfully!', '✅', 'top-center');
+  //     })
+  //     .catch(error => Toast(`Submission failed: ${error.message}`, '❌', 'top-center'))
+  //     .finally(() => setLoading(false))
+
+  // };
 
   return (
     <div className="">

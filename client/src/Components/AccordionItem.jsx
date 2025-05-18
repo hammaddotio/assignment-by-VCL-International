@@ -1,4 +1,5 @@
-// component/AccordionItem.jsx
+
+//components/AccordionItem.jsx 
 const AccordionItem = ({ title, content, isOpen, onClick }) => (
     <div className="border-b border-gray-200">
         <button
@@ -6,7 +7,10 @@ const AccordionItem = ({ title, content, isOpen, onClick }) => (
             onClick={onClick}
         >
             <span className="text-lg font-medium">{title}</span>
-            <span className="ml-2 transform transition-transform duration-200" style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>
+            <span
+                className="ml-2 transform transition-transform duration-200"
+                style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+            >
                 ▶
             </span>
         </button>

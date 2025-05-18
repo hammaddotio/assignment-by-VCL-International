@@ -1,4 +1,4 @@
-// components/Accordion.jsx
+// components/Accordion.jsx 
 import React, { useState } from 'react';
 import { accordionData as items } from '../data/accordionData';
 import AccordionItem from '../Components/AccordionItem';
@@ -11,7 +11,7 @@ const Accordion = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto bg-white shadow-md rounded-md overflow-hidden">
+        <div className="w-full mx-auto bg-white shadow-md rounded-md overflow-hidden">
             {items.map((item, index) => (
                 <AccordionItem
                     key={index}

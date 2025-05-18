@@ -1,32 +1,48 @@
 // components/Step4AdvancedJSX.jsx
 import React, { useState } from 'react';
 import Toast from '../Components/Toast';
+import Button from '../Components/Button';
 
 // Child component to display a greeting
 const Greeting = ({ name }) => {
     const handleClick = () => {
-        Toast(`Hello, ${name}!`, '👋');
+        Toast(`Hello, ${name}!`, '👋', 'top-center');
     };
     return (
-        <h3 onClick={() => handleClick} className="text-lg text-blue-600 pointer">Welcome, {name}!</h3>
+        <h3 onClick={handleClick} className="text-lg text-blue-600 cursor-pointer">
+            Welcome, {name}!
+        </h3>
     );
-}
+};
 
 // Child component to display a list of skills
 const SkillsList = ({ skills }) => (
-    <ul className="list-disc list-inside">
-        {skills.map((skill, index) => (
-            <li key={index} className="text-gray-700">
-                {skill}
-            </li>
-        ))}
-    </ul>
+    <>
+        <h2 className="text-xl font-semibold mt-4 mb-2">Skill List</h2>
+        <ul className="list-disc list-inside mb-4">
+            {skills.map((skill, index) => (
+                <li key={index} className="text-gray-700">
+                    {skill}
+                </li>
+            ))}
+        </ul>
+    </>
 );
 
 const Step4AdvancedJSX = () => {
     const [name, setName] = useState('React Developer');
-    const [skills, setSkills] = useState(['JSX', 'Hooks', 'State Management']);
     const [showSkills, setShowSkills] = useState(true);
+    const [skills, setSkills] = useState(['JSX', 'Hooks', 'State Management']);
+    const [newSkill, setNewSkill] = useState('');
+
+    const handleAddSkill = (e) => {
+        e.preventDefault();
+        const trimmedSkill = newSkill.trim();
+        if (trimmedSkill && !skills.includes(trimmedSkill)) {
+            setSkills((prevSkills) => [...prevSkills, trimmedSkill]);
+            setNewSkill('');
+        }
+    };
 
     const toggleSkills = () => setShowSkills((prev) => !prev);
 
@@ -53,7 +69,16 @@ const Step4AdvancedJSX = () => {
 
             {/* add input for add new skill */}
 
-
+            <form onSubmit={handleAddSkill} className="flex items-center space-x-2 mb-10">
+                <input
+                    type="text"
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                    className="flex-1 border border-gray-300 rounded px-3 py-2"
+                    placeholder="Enter new skill"
+                />
+                <Button label={'Add Skill'} type="submit" />
+            </form>
 
             {/* Toggle Skills Button */}
             <button
