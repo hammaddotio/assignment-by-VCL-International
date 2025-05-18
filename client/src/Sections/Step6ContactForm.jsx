@@ -33,7 +33,8 @@ const Step6ContactForm = () => {
   }
 
   // Function to submit feedback
-  const handleSubmit = async (feedbackData) => {
+  const handleSubmit = async (e, feedbackData) => {
+    e.preventDefault();
     // Fetch CSRF cookie
     await axios.get('/sanctum/csrf-cookie');
 
@@ -41,13 +42,25 @@ const Step6ContactForm = () => {
     const csrfToken = getCookie('XSRF-TOKEN');
 
     // Send POST request with CSRF token in headers
-    const response = await axios.post('/api/feedback', feedbackData, {
+    await axios.post('/api/feedback', {
+      name: formData.name,
+      email: formData.email,
+      message: formData.message
+    }, {
       headers: {
         'X-XSRF-TOKEN': decodeURIComponent(csrfToken),
       },
-    });
+    }).then(response => {
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.statusText}`);
+      }
+      setSubmitted(true);
+      Toast('Data submitted successfully!', '✅', 'top-center');
+    })
+      .catch(error => Toast(`Submission failed: ${error.message}`, '❌', 'top-center'))
+      .finally(() => setLoading(false))
 
-    return response;
+
   };
 
 
@@ -56,11 +69,11 @@ const Step6ContactForm = () => {
   //   e.preventDefault();
   //   setLoading(true);
 
-  //   await axios.post('http://127.0.0.1:8000/api/feedback', {
-  //     name: formData.name,
-  //     email: formData.email,
-  //     message: formData.message
-  //   }, {
+  // await axios.post('http://127.0.0.1:8000/api/feedback', {
+  //   name: formData.name,
+  //   email: formData.email,
+  //   message: formData.message
+  // }, {
   //     withCredentials: true,
   //     withXSRFToken: true,
   //     headers: {
